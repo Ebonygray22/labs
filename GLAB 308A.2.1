@@ -1,0 +1,121 @@
+class Character {
+  static MAX_HEALTH = 100;
+
+  constructor(name) {
+    this.name = name;
+    this.health = Character.MAX_HEALTH;
+    this.inventory = [];
+    this.companion = null;
+  }
+
+  roll(mod = 0) {
+    const result = Math.floor(Math.random() * 20) + 1 + mod;
+    console.log(`${this.name} rolled a ${result}.`);
+    return result;
+  }
+}
+
+class Adventurer extends Character {
+  static ROLES = ["Fighter", "Healer", "Wizard", "Detective"];
+
+  constructor(name, role) {
+    if (!Adventurer.ROLES.includes(role)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
+
+    super(name);
+    this.role = role;
+    this.inventory.push("bedroll", "50 gold coins");
+  }
+
+  scout() {
+    console.log(`${this.name} is scouting ahead...`);
+    super.roll();
+  }
+
+  duel(opponent) {
+    while (this.health > 50 && opponent.health > 50) {
+      const myRoll = this.roll();
+      const opponentRoll = opponent.roll();
+
+      if (myRoll < opponentRoll) {
+        this.health--;
+      } else if (myRoll > opponentRoll) {
+        opponent.health--;
+      }
+
+      console.log(`${this.name} rolled a ${myRoll} and has ${this.health} health left.`);
+      console.log(`${opponent.name} rolled a ${opponentRoll} and has ${opponent.health} health left.`);
+    }
+
+    const winner = this.health > 50 ? this : opponent;
+    console.log(`${winner.name} is the winner of the duel!`);
+  }
+}
+
+class Companion extends Character {
+  constructor(name, type) {
+    super(name);
+    this.type = type;
+  }
+
+  play() {
+    console.log(`${this.name} is playing around...`);
+    super.roll();
+  }
+}
+
+class AdventurerFactory {
+  constructor(role) {
+    this.role = role;
+    this.adventurers = [];
+  }
+
+  generate(name) {
+    const newAdventurer = new Adventurer(name, this.role);
+    this.adventurers.push(newAdventurer);
+    return newAdventurer;
+  }
+
+  findByIndex(index) {
+    return this.adventurers[index];
+  }
+
+  findByName(name) {
+    return this.adventurers.find((a) => a.name === name);
+  }
+}
+
+// Create a factory for detectives
+const detectives = new AdventurerFactory("Detective");
+
+// Create Shaggy and Velma as detectives
+const shaggy = detectives.generate("Shaggy");
+shaggy.inventory.push("scooby snacks", "flashlight", "magnifying glass");
+
+const velma = detectives.generate("Velma");
+velma.inventory.push("magnifying glass", "notebook", "pen");
+
+// Create Scooby and Scrappy as Companions
+shaggy.companion = new Companion("Scooby", "Dog");
+shaggy.companion.companion = new Companion("Scrappy", "Puppy");
+shaggy.companion.companion.inventory = ["tiny hat", "tiny sunglasses"];
+
+// Log each item in Shaggy's inventory
+for(let item of shaggy.inventory) {
+  console.log(item);
+}
+
+// Test the roll method
+shaggy.roll();
+shaggy.roll();
+
+// Test the scout method
+shaggy.scout();
+
+// Test the play method
+shaggy.companion.play();
+shaggy.companion.companion.play();
+
+// Test the duel method
+shaggy.duel(velma);
