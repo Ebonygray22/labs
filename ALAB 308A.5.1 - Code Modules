@@ -1,0 +1,29 @@
+// Calculator functions
+function add(a, b) {
+  return a + b;
+}
+
+function subtract(a, b) {
+  return a - b;
+}
+
+// TodoList functions
+function addTodo(todoList, todo) {
+  todoList.push(todo);
+  return todoList;
+}
+
+function removeTodo(todoList, todo) {
+  const index = todoList.indexOf(todo);
+  if (index > -1) {
+    todoList.splice(index, 1);
+  }
+  return todoList;
+}
+
+// Using the functions
+console.log(add(1, 2)); // Outputs: 3
+
+let myTodos = [];
+myTodos = addTodo(myTodos, 'Finish homework');
+console.log(myTodos); // Outputs: ['Finish homework']
